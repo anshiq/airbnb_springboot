@@ -1,0 +1,42 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+*.iml
+.idea/
+*.iws
+*.ipr
+
+# Node / pnpm
+node_modules/
+dist/
+.next/
+out/
+.pnpm-store/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/settings.json
+.vscode/launch.json
+*.swp
+
+# Docker
+docker-compose.override.yml
