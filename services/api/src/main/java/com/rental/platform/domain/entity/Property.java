@@ -103,7 +103,9 @@ public class Property extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "location_id")
     private Location location;
-
+@OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+@Builder.Default
+private List<PropertyPhoto> photos = new ArrayList<>();
     @ManyToMany
     @JoinTable(
         name = "property_amenities",

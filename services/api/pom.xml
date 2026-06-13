@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
+        <version>4.0.6</version>
         <relativePath/>
     </parent>
 
@@ -18,13 +18,13 @@
     <description>Property Rental Platform REST API</description>
 
     <properties>
-        <java.version>21</java.version>
-        <jjwt.version>0.12.6</jjwt.version>
+        <java.version>25</java.version>
+        <jjwt.version>0.12.7</jjwt.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <lombok.version>1.18.36</lombok.version>
-        <springdoc.version>2.7.0</springdoc.version>
-        <bucket4j.version>8.10.1</bucket4j.version>
-        <razorpay.version>1.4.3</razorpay.version>
+        <lombok.version>1.18.46</lombok.version>
+        <springdoc.version>3.0.3</springdoc.version>
+        <bucket4j.version>8.19.0</bucket4j.version>
+        <razorpay.version>1.4.8</razorpay.version>
     </properties>
 
     <dependencies>
@@ -65,7 +65,9 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
-        <!-- JWT -->
+        <!-- JWT
+             jjwt-jackson replaced with jjwt-gson: Spring Boot 4 uses Jackson 3.0
+             which is incompatible with jjwt-jackson. jjwt-gson has no such conflict. -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -79,12 +81,13 @@
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
+            <artifactId>jjwt-gson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- OpenAPI / Swagger -->
+        <!-- OpenAPI 3 / Swagger UI
+             springdoc v3.x is required for Spring Boot 4.x (v2.x targets Boot 3.x only). -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -111,10 +114,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Rate Limiting -->
+        <!-- Rate Limiting
+             Artifact renamed to bucket4j_jdk17-core for Java 17+ projects in 8.x line. -->
         <dependency>
             <groupId>com.bucket4j</groupId>
-            <artifactId>bucket4j-core</artifactId>
+            <artifactId>bucket4j_jdk17-core</artifactId>
             <version>${bucket4j.version}</version>
         </dependency>
 
@@ -175,7 +179,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.15</version>
                 <executions>
                     <execution>
                         <goals><goal>prepare-agent</goal></goals>

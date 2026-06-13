@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -117,7 +117,7 @@ public class PropertyController {
         propertyService.updateAvailability(id, userDetails.getUsername(), request);
         return ResponseEntity.ok(ApiResponse.success("Availability updated", null));
     }
-    @GetMapping("/search")
+    @GetMapping("/search1")
 @Operation(summary = "Search available properties")
 public ResponseEntity<ApiResponse<PageResponse<PropertySummaryResponse>>> searchProperties(
         @RequestParam String city,

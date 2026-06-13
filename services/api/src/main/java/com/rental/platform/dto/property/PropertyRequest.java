@@ -1,81 +1,114 @@
 package com.rental.platform.dto.property;
 
-import com.rental.platform.domain.enums.BookingType;
-import com.rental.platform.domain.enums.CancellationPolicy;
-import com.rental.platform.domain.enums.PropertyType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PropertyRequest {
 
     @NotBlank(message = "Title is required")
-    @Size(min = 10, max = 200)
+    @Size(max = 200, message = "Title must not exceed 200 characters")
     private String title;
 
     @NotBlank(message = "Description is required")
-    @Size(min = 50, max = 5000)
     private String description;
 
-    @NotNull(message = "Property type is required")
-    private PropertyType propertyType;
+    @NotBlank(message = "Property type is required")
+    private String propertyType;
 
-    @NotNull @Min(1) @Max(50)
+    @NotNull(message = "Max guests is required")
+    @Min(value = 1, message = "Max guests must be at least 1")
     private Integer maxGuests;
 
-    @NotNull @Min(0) @Max(50)
+    @NotNull(message = "Bedrooms is required")
+    @Min(value = 0)
     private Integer bedrooms;
 
-    @NotNull @Min(1) @Max(50)
+    @NotNull(message = "Bathrooms is required")
+    @Min(value = 0)
     private Integer bathrooms;
 
-    @NotNull @Min(1) @Max(100)
+    @NotNull(message = "Beds is required")
+    @Min(value = 1)
     private Integer beds;
 
-    @NotNull
-    @DecimalMin("1.00")
-    @DecimalMax("100000.00")
+    @NotNull(message = "Base price is required")
+    @DecimalMin(value = "0.01", message = "Base price must be greater than 0")
     private BigDecimal basePrice;
 
-    @DecimalMin("0.00")
     private BigDecimal cleaningFee;
 
-    private BookingType bookingType;
-    private CancellationPolicy cancellationPolicy;
+    private String bookingType;
 
-    @Min(1) @Max(365)
+    private String cancellationPolicy;
+
     private Integer minNights;
 
-    @Min(1) @Max(365)
     private Integer maxNights;
 
-    @NotNull @Valid
+    @Valid
     private LocationRequest location;
 
     private List<Long> amenityIds;
+
     private List<PhotoRequest> photos;
 
-    @Data
+    // ------------------------------------------------------------------ //
+    //  Nested: LocationRequest
+    // ------------------------------------------------------------------ //
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class LocationRequest {
-        @NotBlank private String addressLine1;
+
+        @NotBlank(message = "Address line 1 is required")
+        private String addressLine1;
+
         private String addressLine2;
-        @NotBlank private String city;
+
+        @NotBlank(message = "City is required")
+        private String city;
+
         private String state;
-        @NotBlank private String country;
+
+        @NotBlank(message = "Country is required")
+        private String country;
+
         private String zipCode;
+
         private Double latitude;
+
         private Double longitude;
     }
 
-    @Data
+    // ------------------------------------------------------------------ //
+    //  Nested: PhotoRequest
+    // ------------------------------------------------------------------ //
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class PhotoRequest {
-        @NotBlank private String url;
+
+        @NotBlank(message = "Photo URL is required")
+        private String url;
+
+        @Size(max = 200)
         private String caption;
+
         private boolean primary;
+
         private int displayOrder;
     }
 }
