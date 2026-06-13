@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="004" author="rental-platform">
+        <createTable tableName="amenities">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="icon" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <createTable tableName="property_amenities">
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_pa_property"
+                             references="properties(id)"/>
+            </column>
+            <column name="amenity_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_pa_amenity"
+                             references="amenities(id)"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="property_amenities" columnNames="property_id,amenity_id"
+                       constraintName="pk_property_amenities"/>
+    </changeSet>
+</databaseChangeLog>

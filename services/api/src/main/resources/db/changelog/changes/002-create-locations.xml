@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="002" author="rental-platform">
+        <createTable tableName="locations">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="address_line1" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_line2" type="VARCHAR(255)"/>
+            <column name="city" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="VARCHAR(100)"/>
+            <column name="country" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="zip_code" type="VARCHAR(20)"/>
+            <column name="latitude" type="DECIMAL(10,8)"/>
+            <column name="longitude" type="DECIMAL(11,8)"/>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

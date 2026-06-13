@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="012" author="rental-platform">
+        <insert tableName="amenities"><column name="name" value="WiFi"/><column name="category" value="ESSENTIALS"/><column name="icon" value="wifi"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Air Conditioning"/><column name="category" value="ESSENTIALS"/><column name="icon" value="wind"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Heating"/><column name="category" value="ESSENTIALS"/><column name="icon" value="thermometer"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Washer"/><column name="category" value="ESSENTIALS"/><column name="icon" value="washing-machine"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Dryer"/><column name="category" value="ESSENTIALS"/><column name="icon" value="wind"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Free Parking"/><column name="category" value="FEATURES"/><column name="icon" value="car"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Swimming Pool"/><column name="category" value="FEATURES"/><column name="icon" value="pool"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Hot Tub"/><column name="category" value="FEATURES"/><column name="icon" value="hot-tub"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Gym"/><column name="category" value="FEATURES"/><column name="icon" value="dumbbell"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Elevator"/><column name="category" value="FEATURES"/><column name="icon" value="building"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Smoke Alarm"/><column name="category" value="SAFETY"/><column name="icon" value="alert-circle"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Carbon Monoxide Alarm"/><column name="category" value="SAFETY"/><column name="icon" value="alert-triangle"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="First Aid Kit"/><column name="category" value="SAFETY"/><column name="icon" value="heart"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Fire Extinguisher"/><column name="category" value="SAFETY"/><column name="icon" value="flame"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Kitchen"/><column name="category" value="KITCHEN"/><column name="icon" value="utensils"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Refrigerator"/><column name="category" value="KITCHEN"/><column name="icon" value="thermometer"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Microwave"/><column name="category" value="KITCHEN"/><column name="icon" value="zap"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Coffee Maker"/><column name="category" value="KITCHEN"/><column name="icon" value="coffee"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Balcony"/><column name="category" value="OUTDOOR"/><column name="icon" value="sun"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Garden"/><column name="category" value="OUTDOOR"/><column name="icon" value="leaf"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="BBQ Grill"/><column name="category" value="OUTDOOR"/><column name="icon" value="flame"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="TV"/><column name="category" value="ENTERTAINMENT"/><column name="icon" value="tv"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Netflix"/><column name="category" value="ENTERTAINMENT"/><column name="icon" value="play"/><column name="created_at" valueDate="now()"/></insert>
+        <insert tableName="amenities"><column name="name" value="Wheelchair Accessible"/><column name="category" value="ACCESSIBILITY"/><column name="icon" value="accessibility"/><column name="created_at" valueDate="now()"/></insert>
+    </changeSet>
+</databaseChangeLog>

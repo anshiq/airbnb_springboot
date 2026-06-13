@@ -1,0 +1,4 @@
+package com.rental.platform.domain.enums;
+public enum UserRole {
+    SUPER_ADMIN, PROPERTY_MANAGER, HOST, GUEST, SUPPORT_AGENT
+}

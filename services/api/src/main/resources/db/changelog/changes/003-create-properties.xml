@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="003" author="rental-platform">
+        <createTable tableName="properties">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="host_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_properties_host"
+                             references="users(id)"/>
+            </column>
+            <column name="location_id" type="BIGINT">
+                <constraints foreignKeyName="fk_properties_location"
+                             references="locations(id)"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="property_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_guests" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bedrooms" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bathrooms" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="beds" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="base_price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cleaning_fee" type="DECIMAL(10,2)" defaultValueNumeric="0.00"/>
+            <column name="service_fee_percent" type="DECIMAL(5,2)" defaultValueNumeric="12.00"/>
+            <column name="tax_percent" type="DECIMAL(5,2)" defaultValueNumeric="8.00"/>
+            <column name="booking_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cancellation_policy" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="min_nights" type="INTEGER" defaultValueNumeric="1"/>
+            <column name="max_nights" type="INTEGER" defaultValueNumeric="365"/>
+            <column name="average_rating" type="DECIMAL(3,2)" defaultValueNumeric="0.00"/>
+            <column name="review_count" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="rejection_reason" type="TEXT"/>
+            <column name="reviewed_by" type="BIGINT"/>
+            <column name="reviewed_at" type="TIMESTAMPTZ"/>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <createTable tableName="property_photos">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_photos_property"
+                             references="properties(id)"/>
+            </column>
+            <column name="url" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caption" type="VARCHAR(200)"/>
+            <column name="is_primary" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_order" type="INTEGER" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <createTable tableName="availability">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_availability_property"
+                             references="properties(id)"/>
+            </column>
+            <column name="date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_blocked" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="custom_price" type="DECIMAL(10,2)"/>
+            <column name="note" type="VARCHAR(200)"/>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="availability" columnNames="property_id,date"
+                             constraintName="uk_availability_property_date"/>
+
+        <createIndex indexName="idx_properties_host" tableName="properties">
+            <column name="host_id"/>
+        </createIndex>
+        <createIndex indexName="idx_properties_status" tableName="properties">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

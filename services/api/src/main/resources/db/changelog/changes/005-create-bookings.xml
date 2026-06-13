@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="005" author="rental-platform">
+        <createTable tableName="bookings">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_bookings_property"
+                             references="properties(id)"/>
+            </column>
+            <column name="guest_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_bookings_guest"
+                             references="users(id)"/>
+            </column>
+            <column name="check_in_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_out_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="guests_count" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="booking_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nights" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="base_price_per_night" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtotal" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cleaning_fee" type="DECIMAL(10,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="service_fee" type="DECIMAL(10,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="taxes" type="DECIMAL(10,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="special_requests" type="TEXT"/>
+            <column name="cancellation_reason" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <createTable tableName="messages">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="booking_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_messages_booking"
+                             references="bookings(id)"/>
+            </column>
+            <column name="sender_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_messages_sender"
+                             references="users(id)"/>
+            </column>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_read" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <createIndex indexName="idx_bookings_guest" tableName="bookings">
+            <column name="guest_id"/>
+        </createIndex>
+        <createIndex indexName="idx_bookings_property" tableName="bookings">
+            <column name="property_id"/>
+        </createIndex>
+        <createIndex indexName="idx_bookings_status" tableName="bookings">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
