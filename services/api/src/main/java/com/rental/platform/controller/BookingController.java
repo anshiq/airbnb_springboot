@@ -39,7 +39,8 @@ public class BookingController {
     @Operation(summary = "Get price breakdown before booking")
     public ResponseEntity<ApiResponse<PriceBreakdownResponse>> getPriceBreakdown(
             @RequestParam Long propertyId,
-            @Valid BookingRequest request) {
+           @ModelAttribute @Valid BookingRequest request) {
+             System.out.print(propertyId.toString() +  request);
         return ResponseEntity.ok(ApiResponse.success(bookingService.getPriceBreakdown(propertyId, request)));
     }
 

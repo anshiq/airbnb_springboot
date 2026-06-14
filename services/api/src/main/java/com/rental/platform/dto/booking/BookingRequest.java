@@ -24,4 +24,15 @@ public class BookingRequest {
 
     @Size(max = 1000)
     private String specialRequests;
+
+    @Override
+    public String toString() {
+        return "BookingRequest{" +
+                "propertyId=" + propertyId +
+                ", checkInDate=" + checkInDate +
+                ", checkOutDate=" + checkOutDate +
+                ", guestsCount=" + guestsCount +
+                ", specialRequests='" + specialRequests + '\'' +
+                '}';
+    }
 }

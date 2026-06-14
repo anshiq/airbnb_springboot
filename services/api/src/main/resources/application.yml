@@ -15,8 +15,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
+#    properties:
+#      hibernate:
 #        format_sql: true
 #        default_schema: public
   mail:
@@ -47,8 +47,8 @@ app:
     customer-url: ${FRONTEND_CUSTOMER_URL:http://localhost:5173}
     admin-url: ${FRONTEND_ADMIN_URL:http://localhost:5174}
   razorpay:
-    key-id: ${RAZORPAY_KEY_ID:rzp_test_placeholder}
-    key-secret: ${RAZORPAY_KEY_SECRET:placeholder_secret}
+    key-id: ${RAZORPAY_KEY_ID:rzp_test_T1RpU3qWD9u91s}
+    key-secret: ${RAZORPAY_KEY_SECRET:2jPiRTvZ1gBFTHuHJsiAnZJT}
     webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:placeholder_webhook_secret}
   platform:
     service-fee-percent: ${SERVICE_FEE_PERCENT:12.0}
@@ -83,7 +83,7 @@ management:
 logging:
   level:
     com.rental: DEBUG
-    org.springframework.security: INFO
-    org.hibernate.SQL: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

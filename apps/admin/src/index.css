@@ -2,36 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @layer base {
-  * { box-sizing: border-box; }
-  body { @apply font-sans antialiased text-gray-900 bg-gray-50; }
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
 }
 
 @layer components {
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition;
+  }
   .btn-primary {
-    @apply bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700
-           transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm;
+    @apply px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
   }
   .btn-secondary {
-    @apply bg-white text-gray-700 font-medium px-4 py-2 rounded-lg border border-gray-300
-           hover:bg-gray-50 transition-colors text-sm;
+    @apply px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors;
   }
   .btn-danger {
-    @apply bg-red-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-red-700
-           transition-colors text-sm;
+    @apply px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60;
   }
-  .btn-success {
-    @apply bg-green-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-green-700
-           transition-colors text-sm;
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200;
   }
-  .input-base {
-    @apply w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
-           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-           placeholder:text-gray-400;
+  .table-th {
+    @apply px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
   }
-  .card { @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6; }
-  .table-th { @apply px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider; }
-  .table-td { @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900; }
+  .table-td {
+    @apply px-4 py-3 text-sm text-gray-700;
+  }
 }
