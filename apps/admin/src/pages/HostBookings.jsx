@@ -1,26 +1,36 @@
-import { useState, useEffect, useCallback } from 'react';
-import Badge from '../components/Badge.jsx';
-import Modal from '../components/Modal.jsx';
-import Pagination from '../components/Pagination.jsx';
-import { bookingsApi } from '../api/bookings.js';
+import { useState, useEffect, useCallback } from "react";
+import Badge from "../components/Badge.jsx";
+import Modal from "../components/Modal.jsx";
+import Pagination from "../components/Pagination.jsx";
+import { bookingsApi } from "../api/bookings.js";
 
-const STATUSES = ['', 'PENDING', 'CONFIRMED', 'CHECKED_IN', 'COMPLETED', 'CANCELLED'];
+const STATUSES = [
+  "",
+  "PENDING",
+  "CONFIRMED",
+  "CHECKED_IN",
+  "COMPLETED",
+  "CANCELLED",
+];
 
 export default function HostBookings() {
   const [data, setData] = useState(null);
   const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const [cancelModal, setCancelModal] = useState({ open: false, booking: null });
-  const [cancelReason, setCancelReason] = useState('');
+  const [cancelModal, setCancelModal] = useState({
+    open: false,
+    booking: null,
+  });
+  const [cancelReason, setCancelReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const res = await bookingsApi.getHostBookings({
         page,
@@ -42,7 +52,7 @@ export default function HostBookings() {
   async function handleConfirm(booking) {
     try {
       await bookingsApi.confirmBooking(booking.id);
-      showToast('Booking confirmed');
+      showToast("Booking confirmed");
       load();
     } catch (e) {
       showToast(e.message, true);
@@ -54,7 +64,7 @@ export default function HostBookings() {
     setSubmitting(true);
     try {
       await bookingsApi.cancelHostBooking(cancelModal.booking.id, cancelReason);
-      showToast('Booking cancelled');
+      showToast("Booking cancelled");
       setCancelModal({ open: false });
       load();
     } catch (e) {
@@ -70,7 +80,9 @@ export default function HostBookings() {
   }
 
   function fmtCurrency(n) {
-    return n != null ? `$${Number(n).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '—';
+    return n != null
+      ? `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+      : "—";
   }
 
   return (
@@ -78,7 +90,7 @@ export default function HostBookings() {
       {toast && (
         <div
           className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium ${
-            toast.isError ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+            toast.isError ? "bg-red-600 text-white" : "bg-green-600 text-white"
           }`}
         >
           {toast.msg}
@@ -92,14 +104,17 @@ export default function HostBookings() {
           {STATUSES.map((s) => (
             <button
               key={s}
-              onClick={() => { setStatusFilter(s); setPage(0); }}
+              onClick={() => {
+                setStatusFilter(s);
+                setPage(0);
+              }}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
                 statusFilter === s
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                  ? "bg-indigo-600 text-white border-indigo-600"
+                  : "border-gray-300 text-gray-600 hover:bg-gray-50"
               }`}
             >
-              {s || 'All'}
+              {s || "All"}
             </button>
           ))}
         </div>
@@ -109,7 +124,9 @@ export default function HostBookings() {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>
+        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+          {error}
+        </div>
       )}
 
       <div className="card overflow-hidden">
@@ -117,8 +134,20 @@ export default function HostBookings() {
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
               <tr>
-                {['Booking ID', 'Guest', 'Property', 'Check-in', 'Check-out', 'Guests', 'Total', 'Status', 'Actions'].map((h) => (
-                  <th key={h} className="table-th whitespace-nowrap">{h}</th>
+                {[
+                  "Booking ID",
+                  "Guest",
+                  "Property",
+                  "Check-in",
+                  "Check-out",
+                  "Guests",
+                  "Total",
+                  "Status",
+                  "Actions",
+                ].map((h) => (
+                  <th key={h} className="table-th whitespace-nowrap">
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -129,9 +158,12 @@ export default function HostBookings() {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto" />
                   </td>
                 </tr>
-              ) : !(data?.content?.length) ? (
+              ) : !data?.content?.length ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-gray-400 text-sm">
+                  <td
+                    colSpan={9}
+                    className="px-4 py-12 text-center text-gray-400 text-sm"
+                  >
                     No bookings found
                   </td>
                 </tr>
@@ -145,19 +177,25 @@ export default function HostBookings() {
                     </td>
                     <td className="table-td whitespace-nowrap">
                       <p className="text-gray-900 font-medium">
-                        {b.guest?.firstName ?? '—'} {b.guest?.lastName ?? ''}
+                        {b.guest?.firstName ?? "—"} {b.guest?.lastName ?? ""}
                       </p>
-                      <p className="text-xs text-gray-400">{b.guest?.email ?? ''}</p>
+                      <p className="text-xs text-gray-400">
+                        {b.guest?.email ?? ""}
+                      </p>
                     </td>
                     <td className="table-td max-w-[140px]">
                       <p className="text-gray-800 truncate text-xs">
-                        {b.property?.title ?? b.propertyTitle ?? '—'}
+                        {b.property?.title ?? b.propertyTitle ?? "—"}
                       </p>
                     </td>
-                    <td className="table-td whitespace-nowrap text-xs">{b.checkInDate ?? '—'}</td>
-                    <td className="table-td whitespace-nowrap text-xs">{b.checkOutDate ?? '—'}</td>
+                    <td className="table-td whitespace-nowrap text-xs">
+                      {b.checkInDate ?? "—"}
+                    </td>
+                    <td className="table-td whitespace-nowrap text-xs">
+                      {b.checkOutDate ?? "—"}
+                    </td>
                     <td className="table-td text-center">
-                      {b.numGuests ?? b.guestCount ?? '—'}
+                      {b.guestsCount ?? "—"}
                     </td>
                     <td className="table-td tabular-nums font-medium">
                       {fmtCurrency(b.totalPrice ?? b.totalAmount)}
@@ -167,7 +205,7 @@ export default function HostBookings() {
                     </td>
                     <td className="table-td">
                       <div className="flex items-center gap-1 flex-wrap">
-                        {b.status === 'PENDING' && (
+                        {b.status === "PENDING" && (
                           <button
                             onClick={() => handleConfirm(b)}
                             className="px-2.5 py-1 text-xs text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
@@ -175,9 +213,12 @@ export default function HostBookings() {
                             Confirm
                           </button>
                         )}
-                        {!['CANCELLED', 'COMPLETED'].includes(b.status) && (
+                        {!["CANCELLED", "COMPLETED"].includes(b.status) && (
                           <button
-                            onClick={() => { setCancelModal({ open: true, booking: b }); setCancelReason(''); }}
+                            onClick={() => {
+                              setCancelModal({ open: true, booking: b });
+                              setCancelReason("");
+                            }}
                             className="px-2.5 py-1 text-xs text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors"
                           >
                             Cancel
@@ -193,7 +234,11 @@ export default function HostBookings() {
         </div>
       </div>
 
-      <Pagination page={page} totalPages={data?.totalPages ?? 0} onPageChange={setPage} />
+      <Pagination
+        page={page}
+        totalPages={data?.totalPages ?? 0}
+        onPageChange={setPage}
+      />
 
       <Modal
         open={cancelModal.open}
@@ -207,10 +252,12 @@ export default function HostBookings() {
         <div className="space-y-3">
           <div className="p-3 bg-gray-50 rounded-lg text-sm">
             <p className="font-medium text-gray-800">
-              {cancelModal.booking?.guest?.firstName} {cancelModal.booking?.guest?.lastName}
+              {cancelModal.booking?.guest?.firstName}{" "}
+              {cancelModal.booking?.guest?.lastName}
             </p>
             <p className="text-gray-500 text-xs mt-0.5">
-              {cancelModal.booking?.checkInDate} → {cancelModal.booking?.checkOutDate}
+              {cancelModal.booking?.checkInDate} →{" "}
+              {cancelModal.booking?.checkOutDate}
             </p>
           </div>
           <div>

@@ -8,6 +8,8 @@ import com.rental.platform.domain.repository.*;
 import com.rental.platform.dto.auth.*;
 import com.rental.platform.exception.*;
 import com.rental.platform.security.JwtTokenProvider;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,9 +20,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.UUID;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,9 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException("An account with this email already exists");
+            throw new DuplicateResourceException(
+                "An account with this email already exists"
+            );
         }
 
         User user = User.builder()
@@ -58,10 +61,16 @@ public class AuthService {
         user = userRepository.save(user);
         sendEmailVerificationToken(user);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(
+            user.getEmail()
+        );
         // Guest accounts need email verification first, but we still generate tokens
         // so they can complete verification flow
-        Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+            userDetails,
+            null,
+            userDetails.getAuthorities()
+        );
         String accessToken = jwtTokenProvider.generateAccessToken(auth);
         String refreshToken = createRefreshToken(user);
 
@@ -69,12 +78,16 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse login(LoginRequest request)  {
+    public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail().toLowerCase(), request.getPassword())
+            new UsernamePasswordAuthenticationToken(
+                request.getEmail().toLowerCase(),
+                request.getPassword()
+            )
         );
 
-        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
+        User user = userRepository
+            .findByEmail(request.getEmail().toLowerCase())
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.isDeleted()) {
@@ -82,10 +95,14 @@ public class AuthService {
         }
 
         if (user.getStatus() == UserStatus.SUSPENDED) {
-            throw new UnauthorizedException("Account has been suspended. Please contact support.");
+            throw new UnauthorizedException(
+                "Account has been suspended. Please contact support."
+            );
         }
 
-        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+        String accessToken = jwtTokenProvider.generateAccessToken(
+            authentication
+        );
         String refreshToken = createRefreshToken(user);
 
         log.info("User {} logged in successfully", user.getEmail());
@@ -94,18 +111,29 @@ public class AuthService {
 
     @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
-        RefreshToken storedToken = refreshTokenRepository.findByTokenAndRevokedFalse(request.getRefreshToken())
-            .orElseThrow(() -> new UnauthorizedException("Invalid or expired refresh token"));
+        RefreshToken storedToken = refreshTokenRepository
+            .findByTokenAndRevokedFalse(request.getRefreshToken())
+            .orElseThrow(() ->
+                new UnauthorizedException("Invalid or expired refresh token")
+            );
 
         if (storedToken.isExpired()) {
             storedToken.setRevoked(true);
             refreshTokenRepository.save(storedToken);
-            throw new UnauthorizedException("Refresh token has expired. Please login again.");
+            throw new UnauthorizedException(
+                "Refresh token has expired. Please login again."
+            );
         }
 
         User user = storedToken.getUser();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-        Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(
+            user.getEmail()
+        );
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+            userDetails,
+            null,
+            userDetails.getAuthorities()
+        );
         String newAccessToken = jwtTokenProvider.generateAccessToken(auth);
 
         return buildAuthResponse(user, newAccessToken, storedToken.getToken());
@@ -113,7 +141,8 @@ public class AuthService {
 
     @Transactional
     public void logout(String refreshToken) {
-        refreshTokenRepository.findByTokenAndRevokedFalse(refreshToken)
+        refreshTokenRepository
+            .findByTokenAndRevokedFalse(refreshToken)
             .ifPresent(token -> {
                 token.setRevoked(true);
                 refreshTokenRepository.save(token);
@@ -122,11 +151,18 @@ public class AuthService {
 
     @Transactional
     public void verifyEmail(String token) {
-        EmailVerificationToken evToken = emailVerificationTokenRepository.findByTokenAndUsedFalse(token)
-            .orElseThrow(() -> new BusinessException("Invalid or already used verification token"));
+        EmailVerificationToken evToken = emailVerificationTokenRepository
+            .findByTokenAndUsedFalse(token)
+            .orElseThrow(() ->
+                new BusinessException(
+                    "Invalid or already used verification token"
+                )
+            );
 
         if (evToken.isExpired()) {
-            throw new BusinessException("Email verification token has expired. Please request a new one.");
+            throw new BusinessException(
+                "Email verification token has expired. Please request a new one."
+            );
         }
 
         User user = evToken.getUser();
@@ -141,8 +177,13 @@ public class AuthService {
 
     @Transactional
     public void resendVerificationEmail(String email) {
-        User user = userRepository.findByEmail(email.toLowerCase())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        User user = userRepository
+            .findByEmail(email.toLowerCase())
+            .orElseThrow(() ->
+                new ResourceNotFoundException(
+                    "User not found with email: " + email
+                )
+            );
 
         if (user.isEmailVerified()) {
             throw new BusinessException("Email is already verified");
@@ -154,27 +195,34 @@ public class AuthService {
 
     @Transactional
     public void forgotPassword(ForgotPasswordRequest request) {
-        userRepository.findByEmail(request.getEmail().toLowerCase()).ifPresent(user -> {
-            passwordResetTokenRepository.deleteByUserId(user.getId());
-            String token = UUID.randomUUID().toString();
-            PasswordResetToken resetToken = PasswordResetToken.builder()
-                .user(user)
-                .token(token)
-                .expiresAt(Instant.now().plusSeconds(3600))
-                .build();
-            passwordResetTokenRepository.save(resetToken);
-            emailService.sendPasswordReset(user.getEmail(), token);
-        });
+        userRepository
+            .findByEmail(request.getEmail().toLowerCase())
+            .ifPresent(user -> {
+                passwordResetTokenRepository.deleteByUserId(user.getId());
+                String token = UUID.randomUUID().toString();
+                PasswordResetToken resetToken = PasswordResetToken.builder()
+                    .user(user)
+                    .token(token)
+                    .expiresAt(Instant.now().plusSeconds(3600))
+                    .build();
+                passwordResetTokenRepository.save(resetToken);
+                emailService.sendPasswordReset(user.getEmail(), token);
+            });
         // Always return success to prevent email enumeration
     }
 
     @Transactional
     public void resetPassword(ResetPasswordRequest request) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByTokenAndUsedFalse(request.getToken())
-            .orElseThrow(() -> new BusinessException("Invalid or already used reset token"));
+        PasswordResetToken resetToken = passwordResetTokenRepository
+            .findByTokenAndUsedFalse(request.getToken())
+            .orElseThrow(() ->
+                new BusinessException("Invalid or already used reset token")
+            );
 
         if (resetToken.isExpired()) {
-            throw new BusinessException("Password reset token has expired. Please request a new one.");
+            throw new BusinessException(
+                "Password reset token has expired. Please request a new one."
+            );
         }
 
         User user = resetToken.getUser();
@@ -189,10 +237,16 @@ public class AuthService {
 
     @Transactional
     public void changePassword(String email, ChangePasswordRequest request) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository
+            .findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+        if (
+            !passwordEncoder.matches(
+                request.getCurrentPassword(),
+                user.getPassword()
+            )
+        ) {
             throw new BusinessException("Current password is incorrect");
         }
 
@@ -209,7 +263,22 @@ public class AuthService {
             .expiresAt(Instant.now().plusSeconds(86400)) // 24 hours
             .build();
         emailVerificationTokenRepository.save(evToken);
-        emailService.sendEmailVerification(user.getEmail(), token);
+
+        // Send the email only after the transaction commits so the token is
+        // guaranteed to be persisted before the user can click the link.
+        String emailAddress = user.getEmail();
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        emailService.sendEmailVerification(emailAddress, token);
+                    }
+                }
+            );
+        } else {
+            emailService.sendEmailVerification(emailAddress, token);
+        }
     }
 
     private String createRefreshToken(User user) {
@@ -217,27 +286,37 @@ public class AuthService {
         RefreshToken refreshToken = RefreshToken.builder()
             .user(user)
             .token(token)
-            .expiresAt(Instant.now().plusMillis(appProperties.getJwt().getRefreshTokenExpiryMs()))
+            .expiresAt(
+                Instant.now().plusMillis(
+                    appProperties.getJwt().getRefreshTokenExpiryMs()
+                )
+            )
             .build();
         refreshTokenRepository.save(refreshToken);
         return token;
     }
 
-    private AuthResponse buildAuthResponse(User user, String accessToken, String refreshToken) {
+    private AuthResponse buildAuthResponse(
+        User user,
+        String accessToken,
+        String refreshToken
+    ) {
         return AuthResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .tokenType("Bearer")
             .expiresIn(appProperties.getJwt().getAccessTokenExpiryMs() / 1000)
-            .user(AuthResponse.UserSummary.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .role(user.getRole().name())
-                .profilePhotoUrl(user.getProfilePhotoUrl())
-                .emailVerified(user.isEmailVerified())
-                .build())
+            .user(
+                AuthResponse.UserSummary.builder()
+                    .id(user.getId())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .email(user.getEmail())
+                    .role(user.getRole().name())
+                    .profilePhotoUrl(user.getProfilePhotoUrl())
+                    .emailVerified(user.isEmailVerified())
+                    .build()
+            )
             .build();
     }
 }
